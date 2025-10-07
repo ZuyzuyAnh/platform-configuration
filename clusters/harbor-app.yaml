@@ -6,8 +6,8 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: "https://your-gitea/platform-configuration.git"
-    targetRevision: HEAD
+    repoURL: "https://github.com/ZuyzuyAnh/platform-configuration.git"
+    targetRevision: master
     path: clusters/management/harbor
   destination:
     server: "https://kubernetes.default.svc"

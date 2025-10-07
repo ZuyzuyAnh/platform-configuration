@@ -6,4 +6,6 @@ resources:
 
 helmCharts:
   - name: harbor
+    repo: https://helm.goharbor.io
+    version: "1.10.2"
     valuesFile: values.yaml
