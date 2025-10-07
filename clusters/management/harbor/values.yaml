@@ -1,0 +1,9 @@
+expose:
+  type: ingress
+  ingress:
+    hosts:
+      core: harbor.management.example.com
+
+persistence:
+  persistentVolumeClaim:
+    storageClass: longhorn-prod
