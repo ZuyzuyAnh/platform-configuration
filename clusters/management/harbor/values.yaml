@@ -1,9 +1,149 @@
 expose:
   type: ingress
+  tls:
+    enabled: true
+    certSource: cert-manager
   ingress:
     hosts:
-      core: harbor.management.example.com
+      core: harbor.management.com
+      notary: notary.harbor.management.com
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: "selfsigned-issuer"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
+      nginx.ingress.kubernetes.io/proxy-buffering: "off"
+      nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
 
+externalURL: https://harbor.management.com
+
+# Using Default storage class since Longhorn is not currently available
 persistence:
+  enabled: true
+  resourcePolicy: keep
   persistentVolumeClaim:
-    storageClass: longhorn-prod
+    registry:
+      size: 200Gi
+      accessMode: ReadWriteOnce
+    jobservice:
+      jobLog:
+        size: 5Gi
+        accessMode: ReadWriteOnce
+    database:
+      size: 20Gi
+      accessMode: ReadWriteOnce
+    redis:
+      size: 10Gi
+      accessMode: ReadWriteOnce
+    trivy:
+      size: 20Gi
+      accessMode: ReadWriteOnce
+
+# For Devlopment, start with internal Datbase and Redis first
+database:
+  type: internal
+  internal:
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        cpu: 1
+        memory: 1Gi
+  maxOpenConns: 100
+  maxIdleConns: 50
+
+redis:
+  type: internal
+  internal:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+# Migrate to MinIO later
+registry:
+  replicas: 1 # Start with 1, increase to 2+ for HA
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 1
+      memory: 1Gi
+
+# Harbor Core Settings
+harborAdminPassword: "Harbor12345"
+
+logLevel: info
+
+# Core service
+core:
+  replicas: 1 # Start with 1, increase for HA
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 1
+      memory: 1Gi
+
+  # Hardcode only for Development Environment
+  secret: "809c492d061cb7ccbcd79685722fab91"
+  xsrfKey: "XrhMjTvhlKtSY92o5Ujw93tNR5v3RStwAu2XTCW0+PU="
+
+# Job service
+jobservice:
+  replicas: 1
+  maxJobWorkers: 10
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 1
+      memory: 1Gi
+
+# Nginx proxy
+nginx:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+# Portal UI
+portal:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+# Trivy vulnerability scanner
+trivy:
+  enabled: true
+  replicas: 1
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 1
+      memory: 1Gi
+
+# Image pull policy
+imagePullPolicy: IfNotPresent
+
+# Update strategy
+updateStrategy:
+  type: RollingUpdate
