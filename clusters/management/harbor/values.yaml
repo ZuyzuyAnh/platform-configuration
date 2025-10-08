@@ -23,20 +23,20 @@ persistence:
   resourcePolicy: keep
   persistentVolumeClaim:
     registry:
-      size: 200Gi
+      size: 10Gi
       accessMode: ReadWriteOnce
     jobservice:
       jobLog:
-        size: 5Gi
+        size: 2Gi
         accessMode: ReadWriteOnce
     database:
-      size: 20Gi
-      accessMode: ReadWriteOnce
-    redis:
       size: 10Gi
       accessMode: ReadWriteOnce
+    redis:
+      size: 5Gi
+      accessMode: ReadWriteOnce
     trivy:
-      size: 20Gi
+      size: 10Gi
       accessMode: ReadWriteOnce
 
 # For Devlopment, start with internal Datbase and Redis first
