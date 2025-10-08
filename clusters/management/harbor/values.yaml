@@ -15,7 +15,7 @@ expose:
       nginx.ingress.kubernetes.io/proxy-buffering: "off"
       nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
 
-externalURL: http://localhost:8081 # Might be changed later in Ingress
+externalURL: https://harbor.management.com
 
 # Using Default storage class since Longhorn is not currently available
 persistence:
