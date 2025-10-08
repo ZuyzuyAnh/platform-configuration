@@ -9,10 +9,22 @@ defaultSettings:
   guaranteedReplicaManagerCPU: 0.15
   storageMinimalAvailablePercentage: 10
 
+  # Can be adjusted for production later, in KIND we only have 1 node
+  defaultReplication: 1
+
+  # Storage reservation - prevents disk from filling up
+  storageOverProvisioningPercentage: 200
+
+  # Backup target (enable once we deploy to actual cluster)
+  # backupTarget:
+  # backupTargetCredentialSecret:
+
 persistence:
   defaultClass: true
   defaultFsType: ext4
   defaultClassReplicaCount: 1
+  reclaimPolicy: Retain
+  allowVolumeExpansion: true
 
 ingress:
   enabled: true
@@ -21,6 +33,14 @@ ingress:
   tls: true
   annotations:
     cert-manager.io/cluster-issuer: "selfsigned-issuer"
+
+    # # Require authentication
+    # nginx.ingress.kubernetes.io/auth-type: basic
+    # nginx.ingress.kubernetes.io/auth-secret: longhorn-basic-auth
+    # nginx.ingress.kubernetes.io/auth-realm: "Longhorn Authentication"
+    # # Additional security headers
+    # nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 
 resources:
   limits:
@@ -33,10 +53,35 @@ resources:
 # Enabled for KIND compatibility, can be removed later
 privateRegistry:
   registrySecret: null
-
-# Enabled for KIND compatibility, can be removed later
+# Resource limits - reasonable defaults
 longhornManager:
   tolerations:
     - key: "node-role.kubernetes.io/master"
       operator: "Exists"
       effect: "NoSchedule"
+  resources:
+    limits:
+      cpu: 1
+      memory: 1Gi
+    requests:
+      cpu: 0.25
+      memory: 256Mi
+
+longhornDriver:
+  resources:
+    limits:
+      cpu: 0.5
+      memory: 512Mi
+    requests:
+      cpu: 0.1
+      memory: 128Mi
+
+longhornUI:
+  replicas: 1 # Single replica is fine for dev, increase to 2 for prod
+  resources:
+    limits:
+      cpu: 0.5
+      memory: 512Mi
+    requests:
+      cpu: 0.1
+      memory: 128Mi
