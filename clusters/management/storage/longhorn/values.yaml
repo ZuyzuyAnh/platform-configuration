@@ -1,0 +1,42 @@
+defaultSettings:
+  defaultDataPath: /var/lib/longhorn
+  createDefaultDiskLabeledNodes: true
+  defaultDataLocality: best-effort
+  replicaAutoBalance: best-effort
+
+  # Enabled for KIND compatibility only, can be removed later
+  guaranteedEngineManagerCPU: 0.15
+  guaranteedReplicaManagerCPU: 0.15
+  storageMinimalAvailablePercentage: 10
+
+persistence:
+  defaultClass: true
+  defaultFsType: ext4
+  defaultClassReplicaCount: 1
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  host: longhorn.management.local
+  tls: true
+  annotations:
+    cert-manager.io/cluster-issuer: "selfsigned-issuer"
+
+resources:
+  limits:
+    cpu: 0.5
+    memory: 512Mi
+  requests:
+    cpu: 0.25
+    memory: 256Mi
+
+# Enabled for KIND compatibility, can be removed later
+privateRegistry:
+  registrySecret: null
+
+# Enabled for KIND compatibility, can be removed later
+longhornManager:
+  tolerations:
+    - key: "node-role.kubernetes.io/master"
+      operator: "Exists"
+      effect: "NoSchedule"

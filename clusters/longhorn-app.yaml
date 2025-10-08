@@ -1,19 +1,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: harbor-platform
+  name: longhorn-platform
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-wave: "0"
 spec:
   project: default
   source:
     repoURL: "https://github.com/ZuyzuyAnh/platform-configuration.git"
     targetRevision: master
-    path: clusters/management/harbor
+    path: clusters/management/storage/longhorn
   destination:
     server: "https://kubernetes.default.svc"
-    namespace: harbor-system
+    namespace: longhorn-system
   syncPolicy:
     automated:
       prune: true
