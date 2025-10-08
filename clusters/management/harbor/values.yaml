@@ -5,8 +5,8 @@ expose:
     certSource: cert-manager
   ingress:
     hosts:
-      core: harbor.management.com
-      notary: notary.harbor.management.com
+      core: harbor.management.local
+      notary: notary.harbor.management.local
     className: nginx
     annotations:
       cert-manager.io/cluster-issuer: "selfsigned-issuer"
@@ -15,7 +15,7 @@ expose:
       nginx.ingress.kubernetes.io/proxy-buffering: "off"
       nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
 
-externalURL: https://harbor.management.com
+externalURL: https://harbor.management.local
 
 # Using Default storage class since Longhorn is not currently available
 persistence:
